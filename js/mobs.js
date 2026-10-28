@@ -42,6 +42,7 @@ export class Mobs {
     this.dayNight = dayNight;
     this.mummies = [];
     this._dropCallbacks = [];
+    this._killCallbacks = [];
     this._spawnTimer = 0;
     this._texture = this._makeBandageTexture();
   }
@@ -256,6 +257,7 @@ export class Mobs {
       for (const cb of this._dropCallbacks) {
         cb(BLOCK.SAND, n, best.body.x, best.body.y + 0.5, best.body.z);
       }
+      for (const cb of this._killCallbacks) cb();
       this._remove(this.mummies.indexOf(best));
     }
     return true;
@@ -263,6 +265,10 @@ export class Mobs {
 
   onDrop(cb) {
     this._dropCallbacks.push(cb);
+  }
+
+  onKill(cb) {
+    this._killCallbacks.push(cb);
   }
 
   aliveCount() {

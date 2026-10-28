@@ -57,7 +57,7 @@ camera.position.set(14, 10, 14);
 camera.lookAt(0, 2, 0);
 
 const sfx = new SFX();
-const stats = new Stats();
+let stats = new Stats();
 const atlas = makeAtlas();
 const chunkMaterial = makeChunkMaterial(atlas);
 
@@ -582,6 +582,12 @@ window.__PB = {
   },
   get mobs() {
     return mobs;
+  },
+  get entities() {
+    return entities;
+  },
+  get dayNight() {
+    return dayNight;
   },
   get stats() {
     return stats;

@@ -42,6 +42,8 @@ export class Controls {
   }
 
   unlock() {
+    if (!this.isLocked()) return;
+    this._selfUnlock = true;
     document.exitPointerLock();
   }
 
@@ -59,7 +61,11 @@ export class Controls {
       this.keys.clear();
       this.mouseLeft = false;
       this.mouseRight = false;
-      this._emit({ type: "pause" });
+      if (this._selfUnlock) {
+        this._selfUnlock = false;
+      } else {
+        this._emit({ type: "pause" });
+      }
     }
     this._wasLocked = nowLocked;
   }
@@ -90,8 +96,13 @@ export class Controls {
   }
 
   _onKeyDown(e) {
-    if (!this.isLocked() || e.repeat) return;
+    if (e.repeat) return;
     const k = e.key.toLowerCase();
+    if (k === "e") {
+      this._emit({ type: "inventory" });
+      return;
+    }
+    if (!this.isLocked()) return;
     if (k === "w" || k === "a" || k === "s" || k === "d") {
       this.keys.add(k);
     } else if (k === " ") {
@@ -99,8 +110,6 @@ export class Controls {
       e.preventDefault();
     } else if (k === "shift") {
       this.keys.add("shift");
-    } else if (k === "e") {
-      this._emit({ type: "inventory" });
     } else if (k >= "1" && k <= "9") {
       this._slot = Number(k) - 1;
       this._emit({ type: "select", i: this._slot });
