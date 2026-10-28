@@ -103,8 +103,14 @@ export function applyCraft(inv, recipeIndex) {
   }
 
   const out = slots[target];
-  if (out) out.count += outCount;
-  else slots[target] = { id: outId, count: outCount };
+  if (out) {
+    out.count += outCount;
+  } else {
+    const slot = { id: outId, count: outCount };
+    const outDef = ITEMS[outId];
+    if (outDef && outDef.kind === "tool") slot.dur = outDef.tool.dur;
+    slots[target] = slot;
+  }
   return true;
 }
 

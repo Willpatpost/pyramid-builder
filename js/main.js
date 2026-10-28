@@ -281,38 +281,17 @@ function respawn() {
   controls.lock();
 }
 
-function shareText() {
-  const r = stats.report();
-  return "I raised a 15x15 sandstone pyramid in Pyramid Builder! Time: " + Stats.fmtTime(r.seconds) +
-    ", mummies defeated: " + r.mummyKills + ", deaths: " + r.deaths + ". Play: " + PAGES_URL;
-}
-
 function triggerWin(info) {
   if (won) return;
   won = true;
   state = S.WIN;
   controls.unlock();
   markSelection(null);
-  sfx.play("win");
   winHandle = runWinSequence({
     statsReport: stats.report(),
     sfx,
     handlers: {
-      onShare: async () => {
-        try {
-          if (navigator.share) {
-            await navigator.share({ title: "Pyramid Builder Milestone", text: shareText(), url: PAGES_URL });
-          } else {
-            await navigator.clipboard.writeText(shareText());
-            ui.toast("Copied to clipboard!");
-          }
-        } catch (e) {
-          try {
-            await navigator.clipboard.writeText(shareText());
-            ui.toast("Copied to clipboard!");
-          } catch (e2) {}
-        }
-      },
+      onShare: async () => {},
       onContinue: () => {
         if (winHandle) winHandle.stop();
         winHandle = null;
@@ -475,13 +454,6 @@ controls.on((e) => {
 
 canvas.addEventListener("click", () => {
   if (state === S.PLAYING && controls && !controls.isLocked()) controls.lock();
-});
-
-window.addEventListener("keydown", (e) => {
-  if (e.key === "m" || e.key === "M") {
-    sfx.muted = !sfx.muted;
-    ui.toast(sfx.muted ? "Sound off" : "Sound on");
-  }
 });
 
 function tick(dt) {
